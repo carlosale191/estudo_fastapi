@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine, Column, String, Integer, Float, Boolean, ForeignKey
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy_utils.types import ChoiceType
 
 #cria conexão
@@ -42,12 +42,16 @@ class Order(Base):
     status = Column("status", String) #poderia colocar default="PENDENTE" mas já está assim no init
     usuario = Column("usuario", ForeignKey("usuarios.id")) #vinculo com outra tabela
     preco = Column("preco", Float)
-    #item =
+    itens = relationship("OrderItens", cascade="all, delete") #relaciona as tabelas do db, deleta todos itens do pedido
 
     def __init__(self, usuario, status="PENDENTE", preco=0):
         self.status = status
         self.usuario = usuario
         self.preco = preco
+
+    def calcular_preco(self):
+        self.preco = sum(item.preco_unit * item.quantidade for item in self.itens)
+        #multiplica informações de cada item do pedido e soma valores do array
 
 class OrderItens(Base):
     __tablename__ = "pedido_itens"

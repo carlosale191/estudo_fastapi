@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional #dado opcional
+from typing import Optional, List
 
 #objeto p/ padronizar forma de enviar e receber informações
 class UserSchema(BaseModel):
@@ -22,6 +22,24 @@ class OrderSchema(BaseModel):
 class LoginSchema(BaseModel):
     email: str
     senha: str
+
+    class Config:
+        from_attributes = True
+
+class OrderItensSchema(BaseModel):
+    quantidade: int
+    sabor: str
+    tamanho: str
+    preco_unit: float
+
+    class Config:
+        from_attributes = True
+
+class ResponseOrderSchema(BaseModel):
+    id: int
+    status: str
+    preco: float
+    itens: List[OrderItensSchema] #lista com referência a outro schema
 
     class Config:
         from_attributes = True
